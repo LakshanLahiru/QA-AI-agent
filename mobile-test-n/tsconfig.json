@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "types": ["node", "webdriverio/async"],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@pageobjects/*": ["src/pageobjects/*"],
+      "@tests/*": ["src/tests/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "wdio.conf.ts"]
+}
+
+

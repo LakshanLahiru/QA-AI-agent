@@ -1,0 +1,23 @@
+{
+  "page": "login",
+  "feature": "User Login",
+  "acceptanceCriteria": [
+    {
+      "id": "LOGIN_001",
+      "description": "As a registered user, I can log in with valid credentials and land on the home screen.",
+      "preconditions": [
+        "User account exists",
+        "User has valid username and password"
+      ],
+      "steps": [
+        "Open the app on the login screen",
+        "Enter a valid username",
+        "Enter a valid password",
+        "Tap on the login button"
+      ],
+      "expectedResult": "User is redirected to the home screen and is logged in."
+    }
+  ]
+}
+
+
