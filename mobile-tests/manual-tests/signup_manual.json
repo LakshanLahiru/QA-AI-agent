@@ -1,0 +1,19 @@
+{
+  "page": "signup",
+  "feature": "user signup",
+  "testCases": [
+    {
+      "id": "signup100",
+      "title": "User can successfully sign up with valid details",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the signup page.",
+        "Fill in the username field with a valid username.",
+        "Fill in the email field with a valid email address.",
+        "Fill in the password field with a valid password.",
+        "Click on the 'Sign Up' button."
+      ],
+      "expectedResults": "User is successfully signed up and redirected to the welcome page."
+    }
+  ]
+}

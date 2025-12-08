@@ -1,3 +1,49 @@
 *venv
 *.env
 __pycache__
+
+# Output directory (all generated files)
+output/
+
+# Node modules
+node_modules/
+mobile-tests/node_modules/
+run/node_modules/
+
+# Python
+agent-backend/venv/
+agent-backend/__pycache__/
+*.pyc
+__pycache__/
+
+# Environment variables
+.env
+agent-backend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+.cache/
+
+# Keep acceptance criteria (inputs)
+!acceptance-criteria/
+
+*.md
+*.ps1
+instructions/
+mobile-tests/allure-results/
+mobile-tests/allure-report/

@@ -1,0 +1,82 @@
+{
+  "page": "login",
+  "feature": "login",
+  "testCases": [
+    {
+      "id": "login",
+      "title": "Login functionality",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page."
+      ],
+      "expectedResults": "Login page is displayed."
+    },
+    {
+      "id": "login_001",
+      "title": "Enter valid email",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter a valid email address.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "User is successfully logged in and redirected to the dashboard."
+    },
+    {
+      "id": "login_002",
+      "title": "Enter invalid email without '@'",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter an invalid email address without '@'.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "Error message is displayed indicating invalid email format."
+    },
+    {
+      "id": "login1",
+      "title": "Enter valid email",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter a valid email address.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "User is successfully logged in and redirected to the dashboard."
+    },
+    {
+      "id": "login2",
+      "title": "Enter invalid email without '@'",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter an invalid email address without '@'.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "Error message is displayed indicating invalid email format."
+    },
+    {
+      "id": "log1",
+      "title": "Enter valid email",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter a valid email address.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "User is successfully logged in and redirected to the dashboard."
+    },
+    {
+      "id": "LOGIN_001",
+      "title": "User login with valid credentials",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter a valid username.",
+        "Enter a valid password.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "User is successfully logged in and redirected to the dashboard."
+    }
+  ]
+}
