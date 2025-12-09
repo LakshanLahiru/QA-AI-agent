@@ -1,0 +1,14 @@
+✅ CLI Menu Updated - Workflow Steps:
+
+1. Select Platform and Device
+2. Configure App (Native App Path)
+3. Add Acceptance Criteria
+4. Crawl Page Elements
+5. Generate Manual Test Cases
+6. Generate Test Scripts (POM + Tests)
+7. Execute Tests
+8. Generate Allure Report
+9. Run Complete Workflow (All Steps)
+10. Exit
+
+Note: Review and Auto-Heal features are integrated into workflow step 9.

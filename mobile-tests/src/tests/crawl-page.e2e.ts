@@ -90,6 +90,20 @@ describe('Crawl current page elements', () => {
             } catch (error) {
                 console.log('Could not auto-navigate to Swipe, using current screen');
             }
+        } else if (pageName.toLowerCase() === 'text' || pageName.toLowerCase() === 'textinput') {
+            try {
+                console.log('Navigating to Text Input screen...');
+                await driver.pause(2000);
+                // Click Text Button to go to text input screen
+                const textButton = await $('~Text Button');
+                await textButton.waitForDisplayed({ timeout: 10000 });
+                await textButton.click();
+                await driver.pause(2000);
+                console.log('✓ Successfully navigated to Text Input screen');
+            } catch (error) {
+                console.log(`⚠ Could not auto-navigate to Text Input: ${error}`);
+                console.log('Using current screen for crawl...');
+            }
         } else {
             // For other pages, wait a bit for user to navigate manually
             await driver.pause(3000);

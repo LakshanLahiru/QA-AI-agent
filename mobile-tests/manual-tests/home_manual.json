@@ -1,0 +1,17 @@
+{
+  "page": "home",
+  "feature": "home",
+  "testCases": [
+    {
+      "id": "HOME_001",
+      "title": "Test of Test Button",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the home page.",
+        "Locate the 'Test' button on the page.",
+        "Click on the 'Test' button."
+      ],
+      "expectedResults": "The system should respond appropriately to the button click."
+    }
+  ]
+}

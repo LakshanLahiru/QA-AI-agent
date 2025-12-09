@@ -1,0 +1,152 @@
+[
+    {
+        "name": "sdk:testhub",
+        "entryType": "measure",
+        "startTime": 484.8840000629425,
+        "duration": 1458.7452999353409,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 5180
+    },
+    {
+        "name": "sdk:percy",
+        "entryType": "measure",
+        "startTime": 1952.4924000501633,
+        "duration": 0.6598000526428223,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 5180
+    },
+    {
+        "name": "sdk:automate:local",
+        "entryType": "measure",
+        "startTime": 1953.7628000974655,
+        "duration": 0.5616999864578247,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 5180
+    },
+    {
+        "name": "sdk:automate:hub-management",
+        "entryType": "measure",
+        "startTime": 4365.169600009918,
+        "duration": 2272.9532001018524,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 5180
+    },
+    {
+        "name": "sdk:automate:print-buildlink",
+        "entryType": "measure",
+        "startTime": 33871.995900034904,
+        "duration": 1889.2811000347137,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 5180
+    },
+    {
+        "name": "sdk:testhub",
+        "entryType": "measure",
+        "startTime": 535.1290000677109,
+        "duration": 1153.1852999925613,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 12912
+    },
+    {
+        "name": "sdk:percy",
+        "entryType": "measure",
+        "startTime": 1693.7129000425339,
+        "duration": 0.3917999267578125,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 12912
+    },
+    {
+        "name": "sdk:automate:local",
+        "entryType": "measure",
+        "startTime": 1694.2427999973297,
+        "duration": 0.529900074005127,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 12912
+    },
+    {
+        "name": "sdk:automate:hub-management",
+        "entryType": "measure",
+        "startTime": 3779.2835000753403,
+        "duration": 1582.6191999912262,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 12912
+    },
+    {
+        "name": "sdk:automate:print-buildlink",
+        "entryType": "measure",
+        "startTime": 80312.04030001163,
+        "duration": 1390.7892000675201,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 12912
+    },
+    {
+        "name": "sdk:testhub",
+        "entryType": "measure",
+        "startTime": 633.7107000350952,
+        "duration": 1404.0988999605179,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 10880
+    },
+    {
+        "name": "sdk:percy",
+        "entryType": "measure",
+        "startTime": 2046.5422999858856,
+        "duration": 0.37260007858276367,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 10880
+    },
+    {
+        "name": "sdk:automate:local",
+        "entryType": "measure",
+        "startTime": 2047.2924000024796,
+        "duration": 0.2688000202178955,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 10880
+    },
+    {
+        "name": "sdk:automate:hub-management",
+        "entryType": "measure",
+        "startTime": 4375.385100007057,
+        "duration": 1759.1916999816895,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 10880
+    },
+    {
+        "name": "sdk:automate:print-buildlink",
+        "entryType": "measure",
+        "startTime": 101691.17720007896,
+        "duration": 2016.4294999837875,
+        "detail": null,
+        "success": true,
+        "failure": null,
+        "worker": 10880
+    }
+]

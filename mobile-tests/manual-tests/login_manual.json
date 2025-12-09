@@ -12,6 +12,27 @@
       "expectedResults": "Login page is displayed."
     },
     {
+      "id": "LOGIN_001",
+      "title": "User should see the username field",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page."
+      ],
+      "expectedResults": "Username field is visible on the login page."
+    },
+    {
+      "id": "LOGIN_002",
+      "title": "User should be able to login with valid details",
+      "preconditions": [],
+      "steps": [
+        "Navigate to the login page.",
+        "Enter a valid email address.",
+        "Enter a valid password.",
+        "Click the 'Login' button."
+      ],
+      "expectedResults": "User is successfully logged in and redirected to the dashboard."
+    },
+    {
       "id": "login_001",
       "title": "Enter valid email",
       "preconditions": [],
@@ -62,18 +83,6 @@
       "steps": [
         "Navigate to the login page.",
         "Enter a valid email address.",
-        "Click the 'Login' button."
-      ],
-      "expectedResults": "User is successfully logged in and redirected to the dashboard."
-    },
-    {
-      "id": "LOGIN_001",
-      "title": "User login with valid credentials",
-      "preconditions": [],
-      "steps": [
-        "Navigate to the login page.",
-        "Enter a valid username.",
-        "Enter a valid password.",
         "Click the 'Login' button."
       ],
       "expectedResults": "User is successfully logged in and redirected to the dashboard."

@@ -1,17 +1,13 @@
 {
   "page": "login",
-  "feature": "uesrlogin",
+  "feature": "login",
   "acceptanceCriteria": [
     {
       "id": "LOGIN_001",
-      "description": "User should be able to see the title on login screen"
-    },
-    {
-      "id": "LOGIN_002",
       "description": "User should be able to see the username field"
     },
     {
-      "id": "LOGIN_003",
+      "id": "LOGIN_002",
       "description": "User should be able to login after entering valid details"
     }
   ]

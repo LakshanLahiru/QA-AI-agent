@@ -35,6 +35,7 @@ class CLI:
         self.app_path: Optional[str] = None
         self.app_package: Optional[str] = None
         self.app_activity: Optional[str] = None
+        self.use_browserstack: bool = False  # Flag for BrowserStack usage
 
     def print_header(self, text: str):
         """Print a formatted header"""
@@ -199,30 +200,47 @@ class CLI:
         self.print_header("Select Platform and Device")
 
         print("Select platform:")
-        print("1. Android")
-        print("2. iOS")
-        choice = input("Enter choice (1 or 2): ").strip()
+        print("1. Android (Local)")
+        print("2. iOS (Local - macOS only)")
+        print("3. iOS (BrowserStack Cloud)")
+        choice = input("Enter choice (1-3): ").strip()
 
         if choice == "1":
             self.current_platform = "Android"
+            self.use_browserstack = False
         elif choice == "2":
             self.current_platform = "iOS"
+            self.use_browserstack = False
+        elif choice == "3":
+            self.current_platform = "iOS"
+            self.use_browserstack = True
+            return self.configure_browserstack()
         else:
             self.print_error("Invalid choice")
             return False
 
-        # Detect available devices
+        # Detect available devices (local only)
         devices = self.device_manager.detect_devices(self.current_platform)
         
         if not devices:
             self.print_error(f"No {self.current_platform} devices/emulators detected")
+            
+            # For iOS on Windows, suggest BrowserStack
+            if self.current_platform == "iOS" and IS_WINDOWS:
+                self.print_info("\n💡 iOS testing on Windows requires BrowserStack!")
+                use_bs = input("Would you like to use BrowserStack instead? (y/n): ").strip().lower()
+                if use_bs == 'y':
+                    self.use_browserstack = True
+                    return self.configure_browserstack()
+            
             self.print_info("Please ensure:")
             if self.current_platform == "Android":
                 print("  - Android emulator is running, OR")
                 print("  - Android device is connected via USB with USB debugging enabled")
             else:
-                print("  - iOS Simulator is running, OR")
+                print("  - iOS Simulator is running (macOS only), OR")
                 print("  - iOS device is connected with proper provisioning")
+                print("  - Or use option 3 for BrowserStack iOS testing")
             return False
 
         print(f"\nAvailable {self.current_platform} devices/emulators:")
@@ -244,6 +262,77 @@ class CLI:
             self.print_error("Invalid input")
             return False
 
+    def configure_browserstack(self) -> bool:
+        """Configure BrowserStack for iOS testing"""
+        self.print_header("BrowserStack iOS Cloud Testing")
+        
+        # Check if .env file exists in mobile-tests
+        env_file = MOBILE_TESTS_DIR / ".env"
+        
+        if not env_file.exists():
+            self.print_error("BrowserStack .env file not found!")
+            self.print_info(f"Expected location: {env_file}")
+            self.print_info("\nPlease create .env file with:")
+            print("  BROWSERSTACK_USERNAME=your_username")
+            print("  BROWSERSTACK_ACCESS_KEY=your_access_key")
+            print("  BROWSERSTACK_APP_URL=bs://your_app_id")
+            print("\nSee: mobile-tests/BROWSERSTACK_IOS_SETUP.md for full setup guide")
+            return False
+        
+        # Read and verify credentials
+        try:
+            with open(env_file, 'r') as f:
+                env_content = f.read()
+            
+            has_username = 'BROWSERSTACK_USERNAME=' in env_content
+            has_key = 'BROWSERSTACK_ACCESS_KEY=' in env_content
+            has_app = 'BROWSERSTACK_APP_URL=' in env_content
+            
+            if not (has_username and has_key and has_app):
+                self.print_error("BrowserStack credentials incomplete in .env file")
+                self.print_info("Required variables:")
+                if not has_username:
+                    print("  ✗ BROWSERSTACK_USERNAME")
+                if not has_key:
+                    print("  ✗ BROWSERSTACK_ACCESS_KEY")
+                if not has_app:
+                    print("  ✗ BROWSERSTACK_APP_URL")
+                return False
+            
+            self.print_success("BrowserStack credentials found!")
+            
+            # Offer device selection
+            print("\nSelect iOS device:")
+            print("1. iPhone 14 Pro (iOS 16)")
+            print("2. iPhone 13 (iOS 15)")
+            print("3. iPhone 12 (iOS 14)")
+            print("4. iPad Pro 12.9 (iOS 15)")
+            
+            device_choice = input("\nEnter choice (1-4) or press Enter for default: ").strip()
+            
+            devices = {
+                "1": {"name": "iPhone 14 Pro", "version": "16", "id": "browserstack"},
+                "2": {"name": "iPhone 13", "version": "15", "id": "browserstack"},
+                "3": {"name": "iPhone 12", "version": "14", "id": "browserstack"},
+                "4": {"name": "iPad Pro 12.9", "version": "15", "id": "browserstack"},
+            }
+            
+            if device_choice in devices:
+                self.current_device = devices[device_choice]
+            else:
+                # Default to iPhone 14 Pro
+                self.current_device = devices["1"]
+            
+            self.print_success(f"Selected: {self.current_device['name']} (iOS {self.current_device['version']})")
+            self.print_info("Tests will run on BrowserStack cloud")
+            self.print_info("Watch live: https://app-automate.browserstack.com/dashboard")
+            
+            return True
+            
+        except Exception as e:
+            self.print_error(f"Error configuring BrowserStack: {e}")
+            return False
+
     def crawl_page(self, page_name: str) -> bool:
         """Crawl elements from the current page"""
         self.print_header(f"Crawling Elements for {page_name}")
@@ -254,16 +343,23 @@ class CLI:
 
         self.print_info(f"Connecting to {self.current_device['name']}...")
         
-        # Update wdio config with selected device
-        if not self.device_manager.update_wdio_config(self.current_device, self.current_platform):
-            self.print_error("Failed to update WebdriverIO configuration")
-            return False
+        # Update wdio config with selected device (for local only)
+        if not self.use_browserstack:
+            if not self.device_manager.update_wdio_config(self.current_device, self.current_platform):
+                self.print_error("Failed to update WebdriverIO configuration")
+                return False
 
         self.print_info("Starting page crawl...")
         self.print_info("Please ensure:")
-        print("  - Appium server is running (port 4723)")
-        print("  - The app is launched on the device/emulator")
-        print("  - You are on the correct page/screen")
+        
+        if not self.use_browserstack:
+            print("  - Appium server is running (port 4723)")
+            print("  - The app is launched on the device/emulator")
+            print("  - You are on the correct page/screen")
+        else:
+            print("  - Your app is uploaded to BrowserStack")
+            print("  - BROWSERSTACK_APP_URL is set in .env file")
+            self.print_info("BrowserStack will automatically launch the app")
 
         input("\nPress Enter when ready to crawl...")
 
@@ -280,7 +376,15 @@ class CLI:
 
         # Get the correct npx command
         npx_cmd = self._get_npx_cmd()
-        cmd = npx_cmd + ["wdio", "run", "wdio.conf.ts", "--spec", "./src/tests/crawl-page.e2e.ts"]
+        
+        # Select config file based on BrowserStack usage
+        if self.use_browserstack:
+            config_file = "wdio.browserstack.ios.conf.ts"
+            self.print_info("Using BrowserStack iOS configuration")
+        else:
+            config_file = "wdio.conf.ts"
+            
+        cmd = npx_cmd + ["wdio", "run", config_file, "--spec", "./src/tests/crawl-page.e2e.ts"]
         
         try:
             result = subprocess.run(
@@ -288,6 +392,8 @@ class CLI:
                 cwd=str(MOBILE_TESTS_DIR),
                 capture_output=True,
                 text=True,
+                encoding='utf-8',
+                errors='replace',
                 check=False,
                 env=env,
                 shell=IS_WINDOWS,
@@ -297,6 +403,8 @@ class CLI:
                 crawl_file = MOBILE_TESTS_DIR / "crawls" / f"{page_name}.xml"
                 if crawl_file.exists():
                     self.print_success(f"Page elements crawled and saved to {crawl_file}")
+                    if self.use_browserstack:
+                        self.print_info("View session: https://app-automate.browserstack.com/dashboard")
                     return True
                 else:
                     self.print_error("Crawl completed but file not found")
@@ -310,6 +418,8 @@ class CLI:
                 if result.stdout:
                     print("\n--- Standard Output ---")
                     print(result.stdout[-2000:])
+                if self.use_browserstack:
+                    self.print_info("Check BrowserStack logs: https://app-automate.browserstack.com/dashboard")
                 return False
         except Exception as e:
             self.print_error(f"Failed to run crawl: {e}")
@@ -430,9 +540,14 @@ class CLI:
             return False
 
         self.print_info("Starting test execution...")
-        self.print_info("Please ensure Appium server is running (port 4723)")
-
-        input("\nPress Enter to start execution...")
+        
+        if not self.use_browserstack:
+            self.print_info("Please ensure Appium server is running (port 4723)")
+            input("\nPress Enter to start execution...")
+        else:
+            self.print_info("Tests will run on BrowserStack cloud")
+            self.print_info("Watch live: https://app-automate.browserstack.com/dashboard")
+            input("\nPress Enter to start execution...")
 
         # Check if Node.js is available
         node_available, node_info = self._check_node_available()
@@ -445,18 +560,27 @@ class CLI:
             # Get the correct npx command
             npx_cmd = self._get_npx_cmd()
             
+            # Select config file based on BrowserStack usage
+            if self.use_browserstack:
+                config_file = "wdio.browserstack.ios.conf.ts"
+                self.print_info("Using BrowserStack iOS configuration")
+            else:
+                config_file = "wdio.conf.ts"
+            
             # Run specific test file if page_name provided, otherwise run all
             if page_name:
                 spec_file = f"./src/tests/{page_name.lower()}.e2e.ts"
-                cmd = npx_cmd + ["wdio", "run", "wdio.conf.ts", "--spec", spec_file]
+                cmd = npx_cmd + ["wdio", "run", config_file, "--spec", spec_file]
             else:
-                cmd = npx_cmd + ["wdio", "run", "wdio.conf.ts"]
+                cmd = npx_cmd + ["wdio", "run", config_file]
 
             result = subprocess.run(
                 cmd,
                 cwd=str(MOBILE_TESTS_DIR),
                 capture_output=True,
                 text=True,
+                encoding='utf-8',
+                errors='replace',
                 check=False,
                 shell=IS_WINDOWS,
             )
@@ -465,11 +589,15 @@ class CLI:
 
             if success:
                 self.print_success("Test execution completed successfully")
+                if self.use_browserstack:
+                    self.print_info("View results: https://app-automate.browserstack.com/dashboard")
             else:
                 self.print_error("Test execution completed with failures")
                 print("\nLast 500 characters of output:")
                 print(result.stdout[-500:])
                 print(result.stderr[-500:])
+                if self.use_browserstack:
+                    self.print_info("View full logs: https://app-automate.browserstack.com/dashboard")
 
             # Generate Allure report
             self.generate_allure_report()
@@ -798,39 +926,44 @@ class CLI:
             print("\n" + "=" * 60)
             print("Main Menu")
             print("=" * 60)
-            print("1. Add Acceptance Criteria")
-            print("2. Select Platform and Device")
-            print("3. Crawl Page Elements")
-            print("4. Generate Manual Test Cases")
-            print("5. Review Manual Test Cases")
+            print("1. Select Platform and Device")
+            print("2. Configure App (Native App Path)")
+            print("3. Add Acceptance Criteria")
+            print("4. Crawl Page Elements")
+            print("5. Generate Manual Test Cases")
             print("6. Generate Test Scripts (POM + Tests)")
-            print("7. Review Test Scripts")
-            print("8. Execute Tests")
-            print("9. Generate Allure Report")
-            print("10. Auto-Heal Failed Tests")
-            print("11. Configure App (Native App Path)")
-            print("12. Run Complete Workflow (All Steps)")
-            print("13. Exit")
+            print("7. Execute Tests")
+            print("8. Generate Allure Report")
+            print("9. Run Complete Workflow (All Steps)")
+            print("10. Exit")
             print("=" * 60)
 
-            choice = input("\nEnter your choice (1-13): ").strip()
+            choice = input("\nEnter your choice (1-10): ").strip()
 
             if choice == "1":
+                # Select Platform and Device
+                self.select_platform_and_device()
+
+            elif choice == "2":
+                # Configure App (Native App Path)
+                self.configure_app()
+
+            elif choice == "3":
+                # Add Acceptance Criteria
                 criteria = self.get_acceptance_criteria()
                 if criteria:
                     self.save_acceptance_criteria(criteria)
                     self.current_page = criteria["page"]
 
-            elif choice == "2":
-                self.select_platform_and_device()
-
-            elif choice == "3":
+            elif choice == "4":
+                # Crawl Page Elements
                 if not self.current_page:
                     self.current_page = input("Enter page name to crawl: ").strip().lower()
                 if self.current_page:
                     self.crawl_page(self.current_page)
 
-            elif choice == "4":
+            elif choice == "5":
+                # Generate Manual Test Cases
                 if not self.current_page:
                     criteria_file = input("Enter acceptance criteria file name (without .json): ").strip()
                     criteria_path = ACCEPTANCE_CRITERIA_DIR / f"{criteria_file}.json"
@@ -844,15 +977,8 @@ class CLI:
                 else:
                     self.print_error(f"Acceptance criteria file not found: {criteria_path}")
 
-            elif choice == "5":
-                if not self.current_page:
-                    page = input("Enter page name: ").strip().lower()
-                else:
-                    page = self.current_page
-                manual_file = MOBILE_TESTS_DIR / "manual-tests" / f"{page}_manual.json"
-                self.review_manual_tests(manual_file)
-
             elif choice == "6":
+                # Generate Test Scripts (POM + Tests)
                 if not self.current_page:
                     criteria_file = input("Enter acceptance criteria file name (without .json): ").strip()
                     criteria_path = ACCEPTANCE_CRITERIA_DIR / f"{criteria_file}.json"
@@ -867,31 +993,16 @@ class CLI:
                     self.print_error(f"Acceptance criteria file not found: {criteria_path}")
 
             elif choice == "7":
-                if not self.current_page:
-                    page = input("Enter page name: ").strip().lower()
-                else:
-                    page = self.current_page
-                self.review_test_scripts(page)
-
-            elif choice == "8":
+                # Execute Tests
                 page = input("Enter page name to test (or press Enter for all tests): ").strip().lower() or None
                 self.execute_tests(page)
 
-            elif choice == "9":
+            elif choice == "8":
+                # Generate Allure Report
                 self.generate_allure_report()
 
-            elif choice == "10":
-                if not self.current_page:
-                    page = input("Enter page name: ").strip().lower()
-                else:
-                    page = self.current_page
-                self.auto_heal(page)
-
-            elif choice == "11":
-                self.configure_app()
-
-            elif choice == "12":
-                # Run complete workflow
+            elif choice == "9":
+                # Run Complete Workflow (All Steps)
                 criteria = self.get_acceptance_criteria()
                 if not criteria:
                     continue
@@ -924,12 +1035,13 @@ class CLI:
 
                 self.generate_allure_report()
 
-            elif choice == "13":
+            elif choice == "10":
+                # Exit
                 self.print_info("Exiting...")
                 break
 
             else:
-                self.print_error("Invalid choice")
+                self.print_error("Invalid choice. Please enter a number between 1-10.")
 
 
 def main():

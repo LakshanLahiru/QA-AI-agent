@@ -1,0 +1,18 @@
+{
+  "page": "home",
+  "feature": "home",
+  "acceptanceCriteria": [
+    {
+      "id": "HOME_001",
+      "description": "user want to look home screen"
+    },
+    {
+      "id": "HOME_002",
+      "description": "user want to click test button"
+    },
+    {
+      "id": "HOME_003",
+      "description": "user want to type \"apple\" in textbar"
+    }
+  ]
+}

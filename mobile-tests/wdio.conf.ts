@@ -2,7 +2,7 @@ import type { Options } from '@wdio/types';
 
 // App configuration - set these or use CLI to configure
 // These can be set via environment variables or CLI will update this file
-const APP_PATH = process.env.APP_PATH || 'C:/Users/LENOVO/Desktop/upwork/mobile-ai-agent/mobile-tests/app/Android-NativeDemoApp-0.4.0.apk'; // Full path to .apk file
+const APP_PATH = process.env.APP_PATH || 'C:/Users/LENOVO/Desktop/upwork/QA-AI-agent/mobile-tests/app/Android-NativeDemoApp-0.4.0.apk'; // Full path to .apk file
 const APP_PACKAGE = process.env.APP_PACKAGE || 'com.wdiodemoapp'; // Package name for Android-NativeDemoApp-0.4.0.apk
 const APP_ACTIVITY = process.env.APP_ACTIVITY || '.MainActivity'; // e.g., '.MainActivity'
 
