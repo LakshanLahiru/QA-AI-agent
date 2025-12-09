@@ -42,7 +42,7 @@ npm-debug.log*
 # Keep acceptance criteria (inputs)
 !acceptance-criteria/
 
-*.md
+
 *.ps1
 instructions/
 mobile-tests/allure-results/
